@@ -11,27 +11,21 @@ export default function Form(){
     const [password, setPassword] = React.useState('');
     const [passwordConfirm, setPasswordConfirm] = React.useState('');
     const [username, setUsername] = React.useState('');
-    const [street, setStreet] = React.useState('');
-    const [number, setNumber] = React.useState('');
 
     function resetFields(){
         setEmail('');
         setPassword('');
         setPasswordConfirm('');
         setUsername('');
-        setStreet('');
-        setNumber('');
     }
     async function login(e){
-        e.preventDefault();
+        /*e.preventDefault();
         try{
             if(password === passwordConfirm){
                 const response = await axios.post('http://localhost:5000/sign-up', {
                     email: email,
                     password: password,
                     username: username,
-                    street: street,
-                    number: parseInt(number)
                 });
                 navigate('/');
             }
@@ -48,7 +42,7 @@ export default function Form(){
                 alert("Erro no sistema! Tente novamente.")
             }
             resetFields();
-        }
+        }*/
     }
 
     return (
@@ -56,8 +50,6 @@ export default function Form(){
         <LoginForm onSubmit = {login}>
             <input type="text" onChange = {(e) => setUsername(e.target.value)} value = {username} placeholder='Nome'/>
             <input type="email" onChange = {(e) => setEmail(e.target.value)} value = {email} placeholder='E-mail'/>
-            <input type="text" onChange = {(e) => setStreet(e.target.value)} value = {street} placeholder='Rua'/>
-            <input type="number" onChange = {(e) => setNumber(e.target.value)} value = {number} placeholder='Número'/>
             <input type="password" onChange = {(e) => setPassword(e.target.value)} value = {password} placeholder='Senha'/>
             <input type="password" onChange = {(e) => setPasswordConfirm(e.target.value)} value = {passwordConfirm} placeholder='Confirme sua senha'/>
             <Buttons>

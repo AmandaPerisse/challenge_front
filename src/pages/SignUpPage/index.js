@@ -31,7 +31,7 @@ const Content = styled.div`
     margin-right: -50%;
     transform: translate(-50%, -50%);
     gap: 100px;
-    width: 1000px;
+    width: 800px;
 `;
 const Login = styled.div`
     width: 100%;

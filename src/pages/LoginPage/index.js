@@ -1,26 +1,27 @@
 import React from 'react';
-import Logo from '../../Imgs/Logo.js';
 import Form from './Form';
 import styled from 'styled-components';
 
 export default function LoginPage() {
 
-    localStorage.setItem('products', JSON.stringify([]));
-
     return (
         <Content>
-            <Logo />
+            <h5>Bem-vindo!</h5>
             <Login>
-                <h1><strong>
-                    Login
-                </strong></h1>
                 <Form />
             </Login>
         </Content>
     )
 }
 
-const Content = styled.body`
+const Content = styled.div`
+    h5{
+        font-wight: bold;
+        color: white;
+    }
+    padding: 50px 100px;
+    border-radius: 50px;
+    background-color: #133780;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,7 +31,7 @@ const Content = styled.body`
     margin-right: -50%;
     transform: translate(-50%, -50%);
     gap: 100px;
-    width: 500px;
+    width: 1000px;
 `;
 const Login = styled.div`
     width: 100%;

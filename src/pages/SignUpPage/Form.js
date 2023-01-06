@@ -87,19 +87,21 @@ const Buttons = styled.div`
 	display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-top: 20px;
 `;
 const Button = styled.button`
-    background: #7B30F5;
+    background: #94CC1F;
     box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 1px 5px rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
+    border-radius: 100px;
     width: 200px;
-    padding: 8px;
+    padding: 15px 20px;
     h3{
-        color: white;
+        font-weight: bold;
+        color: #133780;
     }
 `;
 const LinkToSingUp = styled.h4`
 	text-decoration: underline;
-    color: rgba(70, 115, 202, 0.8);
+    color: #94CC1F;
     letter-spacing: 0.15px;
 `;

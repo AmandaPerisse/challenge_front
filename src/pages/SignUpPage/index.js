@@ -1,5 +1,4 @@
 import React from 'react';
-import Logo from '../../Imgs/Logo.js';
 import Form from './Form';
 import styled from 'styled-components';
 
@@ -7,18 +6,22 @@ export default function SignUpPage() {
 
     return (
         <Content>
-            <Logo />
+            <h5>Cadastre-se!</h5>
             <Login>
-                <h1><strong>
-                    Cadastro
-                </strong></h1>
                 <Form />
             </Login>
         </Content>
     )
 }
 
-const Content = styled.body`
+const Content = styled.div`
+    h5{
+        font-wight: bold;
+        color: white;
+    }
+    padding: 50px 100px;
+    border-radius: 50px;
+    background-color: #133780;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,7 +31,7 @@ const Content = styled.body`
     margin-right: -50%;
     transform: translate(-50%, -50%);
     gap: 100px;
-    width: 500px;
+    width: 1000px;
 `;
 const Login = styled.div`
     width: 100%;

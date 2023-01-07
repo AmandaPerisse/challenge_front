@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import HomePage from './pages/HomePage';
 import EditQuizPage from './pages/EditQuizPage';
+import NewQuizPage from './pages/NewQuizPage';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/sign-up" element={<SignUpPage />}></Route>
           <Route path="/home" element={<HomePage/>}></Route>
           <Route path="/editQuiz" element={<EditQuizPage/>}></Route>
+          <Route path="/newQuiz" element={<NewQuizPage/>}></Route>
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

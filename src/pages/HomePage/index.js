@@ -10,11 +10,16 @@ import Delete from '../../Imgs/Delete/Delete.js';
 export default function HomePage() {
 
     const {token, setToken} = useContext(UserContext);
-    
+    localStorage.setItem('question', JSON.stringify(""));
+    localStorage.setItem('answers', JSON.stringify(""));
     const navigate = useNavigate();
 
     function edit(){
         navigate("/editQuiz");
+    }
+
+    function newQuiz(){
+        navigate("/newQuiz");
     }
 
     /*const fetchData = async () => {
@@ -61,9 +66,26 @@ export default function HomePage() {
                             </EditDeleteButton>
                         </div>
                     </UserQuizEdit>
-                    <NewQuiz>
+                    <NewQuiz onClick={newQuiz}>
                         <h3>NOVO QUESTIONÁRIO</h3>
                     </NewQuiz>
+                </Quiz>
+            </TitleSubTitle>
+            <TitleSubTitle>
+                <h1>
+                    Questionários respondidos:
+                </h1>
+                <Quiz>
+                    <QuizBackgroundAnswered>
+                        <h2>
+                            Nome do Questionário
+                        </h2>
+                    </QuizBackgroundAnswered>
+                    <QuizBackgroundAnswered>
+                        <h2>
+                            Nome do Questionário
+                        </h2>
+                    </QuizBackgroundAnswered>
                 </Quiz>
             </TitleSubTitle>
             <TitleSubTitle>
@@ -122,6 +144,15 @@ const UserQuizBackground = styled.button`
     border-radius: 100px;
 `;
 const QuizBackground = styled.button`
+    background-color: #94CC1F;
+    width: 100%;
+    padding: 20px 50px;
+    h2{
+        color: #133780;
+    }
+    border-radius: 100px;
+`;
+const QuizBackgroundAnswered = styled.div`
     background-color: #94CC1F;
     width: 100%;
     padding: 20px 50px;

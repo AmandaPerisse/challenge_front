@@ -5,6 +5,8 @@ import './styles/reset.css';
 import './styles/style.css';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import HomePage from './pages/HomePage';
+import EditQuizPage from './pages/EditQuizPage';
 
 function App() {
 
@@ -21,6 +23,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginPage />}></Route>
           <Route path="/sign-up" element={<SignUpPage />}></Route>
+          <Route path="/home" element={<HomePage/>}></Route>
+          <Route path="/editQuiz" element={<EditQuizPage/>}></Route>
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

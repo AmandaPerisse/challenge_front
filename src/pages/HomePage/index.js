@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router';
 import UserContext from '../../providers/UserContext';
 
-import Edit from '../../Imgs/Edit/Edit.js';
 import Delete from '../../Imgs/Delete/Delete.js';
 
 export default function HomePage() {
@@ -12,14 +11,16 @@ export default function HomePage() {
     const {token, setToken} = useContext(UserContext);
     localStorage.setItem('question', JSON.stringify(""));
     localStorage.setItem('answers', JSON.stringify(""));
+    localStorage.setItem('title', JSON.stringify(""));
+    localStorage.setItem('completedQuestion', JSON.stringify(""));
     const navigate = useNavigate();
-
-    function edit(){
-        navigate("/editQuiz");
-    }
 
     function newQuiz(){
         navigate("/newQuiz");
+    }
+
+    function answerQuiz(id){
+        navigate(`/answerQuiz/${id}`);
     }
 
     /*const fetchData = async () => {
@@ -58,9 +59,6 @@ export default function HomePage() {
                             </h2>
                         </UserQuizBackground>
                         <div>
-                            <EditDeleteButton onClick={edit}>
-                                <Edit />
-                            </EditDeleteButton>
                             <EditDeleteButton>
                                 <Delete />
                             </EditDeleteButton>
@@ -93,7 +91,7 @@ export default function HomePage() {
                     Questionários disponíveis:
                 </h1>
                 <Quiz>
-                    <QuizBackground>
+                    <QuizBackground onClick={() => answerQuiz(0)}> {/* Passar parametro o id do quiz pegando da lista que vem da promise */}
                         <h2>
                             Nome do Questionário
                         </h2>

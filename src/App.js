@@ -11,15 +11,13 @@ import NewQuizPage from './pages/NewQuizPage';
 
 function App() {
 
-  const initialToken = localStorage.getItem("token");
-  const initialName = localStorage.getItem("name");
+  const initialId = localStorage.getItem(0);
 
-  const [infoName, setInfoName] = useState(JSON.parse(initialName));
-  const [token, setToken] = useState(initialToken);
+  const [userId, setUserId] = useState(JSON.parse(initialId));
 
   return (
 
-    <UserContext.Provider value={{ infoName, token, setToken }} >
+    <UserContext.Provider value={{ userId, setUserId }} >
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LoginPage />}></Route>

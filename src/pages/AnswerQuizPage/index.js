@@ -6,8 +6,6 @@ import UserContext from '../../providers/UserContext';
 
 export default function HomePage() {
 
-    const {token, setToken} = useContext(UserContext);
-
     const navigate = useNavigate();
 
     let answersAmount = 0; //tem que chegar no total de questões

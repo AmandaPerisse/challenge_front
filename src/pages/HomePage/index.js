@@ -8,11 +8,15 @@ import Delete from '../../Imgs/Delete/Delete.js';
 
 export default function HomePage() {
 
-    const {token, setToken} = useContext(UserContext);
     localStorage.setItem('question', JSON.stringify(""));
     localStorage.setItem('answers', JSON.stringify(""));
     localStorage.setItem('title', JSON.stringify(""));
     localStorage.setItem('completedQuestion', JSON.stringify(""));
+
+    const [dataList, setDataList] = React.useState('');
+    
+    const { userId } = useContext(UserContext);
+
     const navigate = useNavigate();
 
     function newQuiz(){
@@ -23,24 +27,30 @@ export default function HomePage() {
         navigate(`/answerQuiz/${id}`);
     }
 
-    /*const fetchData = async () => {
-        const promise = await axios.get('http://localhost:5000/home', {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+    const fetchData = async () => {
+        const promise = await axios.get(`http://localhost:5000/quizzes/${userId}`, {
         });
         const { data } = promise;
         setDataList(data);
+        const alert = document.querySelector(".noUserQuizzes");
+        if(!data.userQuizzes){
+            alert.classList.remove("hidden");
+        }
+        else{
+            alert.classList.add("hidden");
+        }
+        console.log(alert)
     }
 
     useEffect(() => {
         try{
             fetchData();
+            console.log(dataList)
         }
         catch(e){
             alert('Falha.');
         }
-    }, []);*/
+    }, []);
 
     return (
         <Content>
@@ -49,7 +59,7 @@ export default function HomePage() {
                     Seus Questionários:
                 </h1>
                 <Quiz>
-                    <h2>
+                    <h2 className = "noUserQuizzes hidden"> {/* CONTINUAR DAQUI */}
                         Você não possui questionários.
                     </h2>
                     <UserQuizEdit>

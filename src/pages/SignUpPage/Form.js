@@ -7,25 +7,25 @@ import { Link } from "react-router-dom";
 export default function Form(){
 
     const navigate = useNavigate();
-    const [email, setEmail] = React.useState('');
+    const [cpf, setCpf] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [passwordConfirm, setPasswordConfirm] = React.useState('');
-    const [username, setUsername] = React.useState('');
+    const [name, setName] = React.useState('');
 
     function resetFields(){
-        setEmail('');
+        setCpf('');
         setPassword('');
         setPasswordConfirm('');
-        setUsername('');
+        setName('');
     }
-    async function login(e){
-        /*e.preventDefault();
+    async function singUp(e){
+        e.preventDefault();
         try{
             if(password === passwordConfirm){
                 const response = await axios.post('http://localhost:5000/sign-up', {
-                    email: email,
+                    cpf: cpf,
                     password: password,
-                    username: username,
+                    name: name,
                 });
                 navigate('/');
             }
@@ -42,14 +42,14 @@ export default function Form(){
                 alert("Erro no sistema! Tente novamente.")
             }
             resetFields();
-        }*/
+        }
     }
 
     return (
         
-        <LoginForm onSubmit = {login}>
-            <input type="text" onChange = {(e) => setUsername(e.target.value)} value = {username} placeholder='Nome'/>
-            <input type="email" onChange = {(e) => setEmail(e.target.value)} value = {email} placeholder='E-mail'/>
+        <LoginForm onSubmit = {singUp}>
+            <input type="text" onChange = {(e) => setName(e.target.value)} value = {name} placeholder='Nome'/>
+            <input type="text" onChange = {(e) => setCpf(e.target.value)} value = {cpf} placeholder='CPF'/>
             <input type="password" onChange = {(e) => setPassword(e.target.value)} value = {password} placeholder='Senha'/>
             <input type="password" onChange = {(e) => setPasswordConfirm(e.target.value)} value = {passwordConfirm} placeholder='Confirme sua senha'/>
             <Buttons>

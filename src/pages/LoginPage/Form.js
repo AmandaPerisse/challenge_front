@@ -7,51 +7,44 @@ import UserContext from '../../providers/UserContext';
 
 export default function Form(){
 
-    const [email, setEmail] = React.useState('');
+    const [cpf, setCpf] = React.useState('');
     const [password, setPassword] = React.useState('');
 
-    /*const { infoNumber, setInfoNumber, infoUsername, setInfoUsername, infoStreet, setInfoStreet, token, setToken } = useContext(UserContext);
+    const { userId, setUserId } = useContext(UserContext);
 
 
     const navigate = useNavigate();
     function resetFields(){
-        setEmail('');
+        setCpf('');
         setPassword('');
-    }*/
+    }
     async function login(e){
-        /*e.preventDefault();
+        e.preventDefault();
         try{
-            const response = await axios.post('http://localhost:5000/login', {
-                email: email,
+            const response = await axios.post('http://localhost:5000/sign-in', {
+                cpf: cpf,
                 password: password
             });
             const data = response.data;
             if(data){
-                setToken(data.token);
-                setInfoUsername(data.username);
-                setInfoNumber(data.userNumber);
-                setInfoStreet(data.userStreet);
-                localStorage.setItem("token", data.token)
-                localStorage.setItem("username", JSON.stringify(data.username));
-                localStorage.setItem("street", JSON.stringify(data.userStreet));
-                localStorage.setItem("number", JSON.stringify(data.userNumber));
+                setUserId(data.data);
                 navigate('/home');
             }
             else{
-                alert('E-mail ou senha inválidos!');
+                alert('Cpf ou senha inválidos!');
                 resetFields();
             }
         }
         catch(e){
             alert('Usuário ou senha incorreto!');
             resetFields();
-        }*/
+        }
     }
 
     return (
         
         <LoginForm onSubmit = {login}>
-            <input type="email" onChange = {(e) => setEmail(e.target.value)} value = {email} placeholder='E-mail'/>
+            <input type="text" onChange = {(e) => setCpf(e.target.value)} value = {cpf} placeholder='CPF'/>
             <input type="password" onChange = {(e) => setPassword(e.target.value)} value = {password} placeholder='Senha'/>
             <Buttons>
                 <Link to="/sign-up">

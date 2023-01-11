@@ -11,7 +11,6 @@ import Confirm from '../../Imgs/Confirm/Confirm.js';
 
 export default function HomePage() {
 
-    const {token, setToken} = useContext(UserContext);
     const [list, setList] = React.useState([0, 1, 2, 3]); {/* Lista que vai receber as perguntas e respostas */}
     
     const navigate = useNavigate();

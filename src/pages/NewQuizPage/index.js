@@ -1,38 +1,12 @@
-import React, { useContext, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router';
-import UserContext from '../../providers/UserContext';
 
 import Form from './FormNewQuiz';
-import Edit from '../../Imgs/Edit/Edit.js';
-import Delete from '../../Imgs/Delete/Delete.js';
-import Confirm from '../../Imgs/Confirm/Confirm.js';
 
 export default function HomePage() {
-
-    const [list, setList] = React.useState([0, 1, 2, 3]); {/* Lista que vai receber as perguntas e respostas */}
     
     const navigate = useNavigate();
-
-    /*const fetchData = async () => {
-        const promise = await axios.get('http://localhost:5000/home', {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-        const { data } = promise;
-        setDataList(data);
-    }
-
-    useEffect(() => {
-        try{
-            fetchData();
-        }
-        catch(e){
-            alert('Falha.');
-        }
-    }, []);*/
 
     return (
         <Content>

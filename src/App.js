@@ -24,7 +24,7 @@ function App() {
           <Route path="/sign-up" element={<SignUpPage />}></Route>
           <Route path="/home" element={<HomePage/>}></Route>
           <Route path="/newQuiz" element={<NewQuizPage/>}></Route>
-          <Route path="/answerQuiz/:id" element={<AnswerQuizPage/>}></Route>
+          <Route path="/answerQuiz" element={<AnswerQuizPage/>}></Route>
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router';
 import { Link } from "react-router-dom";
+import UserContext from '../../providers/UserContext';
 
 import Delete from '../../Imgs/Delete/Delete.js';
 import Confirm from '../../Imgs/Confirm/Confirm.js';
@@ -10,35 +11,43 @@ import Confirm from '../../Imgs/Confirm/Confirm.js';
 export default function Form(){
 
     let title = "";
+    let description = "";
     let question = "";
     let answers = [];
     let completedQuestion = [];
+    let userId = JSON.parse(localStorage.getItem('userId'));
 
     const navigate = useNavigate();
 
     useEffect(() => {
+
         title = JSON.parse(localStorage.getItem('title'));
+        description = JSON.parse(localStorage.getItem('description'));
         question = JSON.parse(localStorage.getItem('question'));
         answers = JSON.parse(localStorage.getItem('answers'));
         completedQuestion = JSON.parse(localStorage.getItem('completedQuestion'));
 
         const addTitleButton = document.querySelector(".addTitleButton");
+        const addDescriptionButton = document.querySelector(".addDescriptionButton");
         const addQuestionButton = document.querySelector(".addQuestionButton");
         const addAnswersButton = document.querySelector(".addAnswersButton");
         const button = document.querySelector(".saveCancelCompleteQuestion");
         const saveQuizButton = document.querySelector(".saveQuiz");
 
-        console.log(title);
-        console.log(question)
-        console.log(answers)
-
         if(title){
-            addQuestionButton.classList.remove("hidden");
+            addDescriptionButton.classList.remove("hidden");
             addTitleButton.classList.add("hidden");
         }
         else{
-            addQuestionButton.classList.add("hidden");
+            addDescriptionButton.classList.add("hidden");
             addTitleButton.classList.remove("hidden");
+        }
+        if(description){
+            addQuestionButton.classList.remove("hidden");
+            addDescriptionButton.classList.add("hidden");
+        }
+        else{
+            addQuestionButton.classList.add("hidden");
         }
         if (question){
             addQuestionButton.classList.add("hidden");
@@ -81,6 +90,30 @@ export default function Form(){
         const title = document.querySelector("#titleInput").value;
         if(title){
             localStorage.setItem('title', JSON.stringify(title));
+            window.location.reload();
+        }
+    }
+
+    function addDescription(e){
+        e.preventDefault();
+        const addDescription = document.querySelector(".addDescriptionDiv");
+        addDescription.classList.remove("hidden");
+        const addDescriptionButton = document.querySelector(".addDescriptionButton");
+        addDescriptionButton.classList.add("hidden");
+    }
+
+    function cancelDescription(e){
+        e.preventDefault();
+        const addDescription = document.querySelector(".addDescriptionDiv");
+        addDescription.classList.add("hidden");
+        const addDescriptionButton = document.querySelector(".addDescriptionButton");
+        addDescriptionButton.classList.remove("hidden");
+    }
+
+    function saveDescription(){
+        const description = document.querySelector("#descriptionInput").value;
+        if(description){
+            localStorage.setItem('description', JSON.stringify(description));
             window.location.reload();
         }
     }
@@ -140,14 +173,23 @@ export default function Form(){
 
     function saveCompleteQuestion(){
         let completedQuestion = JSON.parse(localStorage.getItem('completedQuestion'));
-        let questionArr = [];
+        let array = [];
+        let questionsArr = [];
         if(completedQuestion){
-            questionArr = [...completedQuestion, {title: title, question: question, answers: answers}];
+
+            questionsArr = completedQuestion.questions;
+            let newQuestionsArr = { question: question, answers: answers }
+            questionsArr.push(newQuestionsArr);
+
+            array = { title: title, description: description, questions: questionsArr };
         }
         else{
-            questionArr = [{title: title, question: question, answers: answers}];
-        }
-        localStorage.setItem('completedQuestion', JSON.stringify(questionArr));
+            let questionArr = [{ question: question, answers: answers }]
+
+            array = { title: title, description: description, questions: questionArr };
+        }      
+
+        localStorage.setItem('completedQuestion', JSON.stringify(array));
         localStorage.setItem('question', JSON.stringify(""));
         localStorage.setItem('answers', JSON.stringify(""));
         window.location.reload();
@@ -162,7 +204,7 @@ export default function Form(){
     function RenderAnswersWhileCreating(){
         answers = JSON.parse(localStorage.getItem('answers'));
         let order = 0;
-        if (answers.length > 0){
+        if (answers){
             return (
                 answers.map(answer => {
                     order++;
@@ -182,9 +224,9 @@ export default function Form(){
     function RenderQuestion(){
         let completedQuestions = JSON.parse(localStorage.getItem('completedQuestion'));
         let order = -1;
-        if (completedQuestions.length > 0){
+        if (completedQuestions.questions){
             return (
-                completedQuestions.map(question => {
+                completedQuestions.questions.map(question => {
                     order++;
                     return(
                         <QuestionBackground key = {order}>
@@ -204,7 +246,7 @@ export default function Form(){
 
     function RenderAnswers({answers}){
         let order = 0;
-        if (answers.length > 0){
+        if (answers){
             return (
                 answers.map(answer => {
                     order++;
@@ -224,42 +266,22 @@ export default function Form(){
     async function saveQuiz(e){
         e.preventDefault();
         if(completedQuestion){
-            
-        }
-        navigate("/home");
-        //CONFIGURAR PARA SALVAR NO BANCO
-        /*e.preventDefault();
-
-        
-
-            <input type="text" onChange = {(e) => setUsername(e.target.value)} value = {username} placeholder='Nome'/>
-            <input type="email" onChange = {(e) => setEmail(e.target.value)} value = {email} placeholder='E-mail'/>
-            <input type="password" onChange = {(e) => setPassword(e.target.value)} value = {password} placeholder='Senha'/>
-            <input type="password" onChange = {(e) => setPasswordConfirm(e.target.value)} value = {passwordConfirm} placeholder='Confirme sua senha'/>
-
-        try{
-            if(password === passwordConfirm){
-                const response = await axios.post('http://localhost:5000/sign-up', {
-                    email: email,
-                    password: password,
-                    username: username,
+            try{
+                const response = await axios.post('http://localhost:5000/quizzes', {
+                    userId: userId,
+                    nameQuiz: completedQuestion.title,
+                    descriptionQuiz: completedQuestion.description,
+                    questions: completedQuestion.questions
                 });
-                navigate('/');
             }
-            else{
-                alert('As senhas não são iguais');
-                resetFields();
-            }
-        }
-        catch(error){
-            if (error.response.status === 409) {
-                alert("Email já cadastrado! Tente novamente")
-            }
-            else {
+            catch(error){
                 alert("Erro no sistema! Tente novamente.")
             }
-            resetFields();
-        }*/
+        }
+        else{
+            alert("Quiz incompleto!");
+        }
+        navigate("/home");   
     }
 
     return (
@@ -268,6 +290,9 @@ export default function Form(){
             <h1>
                 {JSON.parse(localStorage.getItem('title'))}
             </h1>
+            <h2>
+                {JSON.parse(localStorage.getItem('description'))}
+            </h2>
             <InputButtons className = "addTitleDiv hidden">
                 <input id = "titleInput" type="text" placeholder='Digite o título do questionário aqui'/>
                 <button type = "button" onClick={cancelTitle}>
@@ -279,6 +304,18 @@ export default function Form(){
             </InputButtons>
             <ButtonAdd className = "addTitleButton" onClick={addTitle}>
                 <h3>ADICIONAR TÍTULO</h3>
+            </ButtonAdd>
+            <InputButtons className = "addDescriptionDiv hidden">
+                <input id = "descriptionInput" type="text" placeholder='Digite a descrição do questionário aqui'/>
+                <button type = "button" onClick={cancelDescription}>
+                    <Delete />
+                </button>
+                <button type = "button" onClick = {saveDescription}>
+                    <Confirm />
+                </button>
+            </InputButtons>
+            <ButtonAdd className = "addDescriptionButton hidden" onClick={addDescription}>
+                <h3>ADICIONAR DESCRIÇÃO</h3>
             </ButtonAdd>
             <RenderQuestion />
             <QuestionBackground>

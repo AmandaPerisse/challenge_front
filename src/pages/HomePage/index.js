@@ -1,21 +1,23 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router';
-import UserContext from '../../providers/UserContext';
 
 import Delete from '../../Imgs/Delete/Delete.js';
 
 export default function HomePage() {
-
     localStorage.setItem('question', JSON.stringify(""));
     localStorage.setItem('answers', JSON.stringify(""));
     localStorage.setItem('title', JSON.stringify(""));
+    localStorage.setItem('description', JSON.stringify(""));
     localStorage.setItem('completedQuestion', JSON.stringify(""));
+    localStorage.setItem('nameQuiz', JSON.stringify(""));
 
-    const [dataList, setDataList] = React.useState('');
-    
-    const { userId } = useContext(UserContext);
+    let userId = JSON.parse(localStorage.getItem('userId'));
+
+    const [userQuizzes, setUserQuizzes] = React.useState([]);
+    const [availableQuizzes, setAvailableQuizzes] = React.useState([]);
+    const [answeredQuizzes, setAnsweredQuizzes] = React.useState([]);
 
     const navigate = useNavigate();
 
@@ -23,29 +25,116 @@ export default function HomePage() {
         navigate("/newQuiz");
     }
 
-    function answerQuiz(id){
-        navigate(`/answerQuiz/${id}`);
+    function answerQuiz(nameQuiz){
+        localStorage.setItem('nameQuiz', JSON.stringify(nameQuiz));
+        navigate(`/answerQuiz`);
+    }
+
+    async function deleteQuiz(name){
+       const promise = await axios.delete(`http://localhost:5000/quizzes/quiz`, {
+            data:{
+                name: name
+            }
+        });
+        const { data } = promise;
+        console.log(data)
+        window.location.reload();
     }
 
     const fetchData = async () => {
         const promise = await axios.get(`http://localhost:5000/quizzes/${userId}`, {
         });
         const { data } = promise;
-        setDataList(data);
-        const alert = document.querySelector(".noUserQuizzes");
-        if(!data.userQuizzes){
-            alert.classList.remove("hidden");
+        setAnsweredQuizzes(data.data.answeredQuizzes);
+        setAvailableQuizzes(data.data.availableQuizzes);
+        setUserQuizzes(data.data.userQuizzes);
+    }
+
+    function RenderUserQuizzes(){
+        let order = 0;
+        let position = 0;
+        if (userQuizzes.length > 0){
+            return (
+                userQuizzes.map(userQuiz => {
+                    order++;
+                    position = order-1;
+                    return(
+                        <UserQuizEdit key = {order}>
+                            <QuizBackgroundAnswered>
+                                <h2>
+                                    {userQuiz.name}
+                                </h2>
+                            </QuizBackgroundAnswered>
+                            <EditDeleteButton type= "button" onClick = {() => deleteQuiz(userQuiz.name)}>
+                                <Delete />
+                            </EditDeleteButton>
+                        </UserQuizEdit>
+                    )
+                })
+            )
         }
         else{
-            alert.classList.add("hidden");
+            return (
+                <h2>
+                    Você não possui questionários.
+                </h2>
+            );
         }
-        console.log(alert)
+    }
+
+    function RenderAnsweredQuizzes(){
+        let order = 0;
+        if (answeredQuizzes.length > 0){
+            return (
+                answeredQuizzes.map(answeredQuiz => {
+                    order++;
+                    return(
+                        <QuizBackgroundAnswered key = {order}>
+                            <h2>
+                                {answeredQuiz}
+                            </h2>
+                        </QuizBackgroundAnswered>
+                    )
+                })
+            )
+        }
+        else{
+            return (
+                <h2>
+                    Você não respondeu nenhum questionário.
+                </h2>
+            );
+        }
+    }
+
+    function RenderAvailableQuizzes(){
+        let order = 0;
+        if (availableQuizzes.length > 0){
+            return (
+                availableQuizzes.map(availableQuiz => {
+                    order++;
+                    return(
+                        <QuizBackground onClick={() => answerQuiz(availableQuiz.name)} key = {order}>
+                            <h2>
+                                {availableQuiz.name}
+                            </h2>
+                        </QuizBackground>
+                    )
+                })
+            )
+        }
+        else{
+            return (
+                <h2>
+                    Não tem questionários disponíveis.
+                </h2>
+            );
+        }
     }
 
     useEffect(() => {
         try{
             fetchData();
-            console.log(dataList)
         }
         catch(e){
             alert('Falha.');
@@ -59,21 +148,7 @@ export default function HomePage() {
                     Seus Questionários:
                 </h1>
                 <Quiz>
-                    <h2 className = "noUserQuizzes hidden"> {/* CONTINUAR DAQUI */}
-                        Você não possui questionários.
-                    </h2>
-                    <UserQuizEdit>
-                        <UserQuizBackground>
-                            <h2>
-                                Nome do Questionário
-                            </h2>
-                        </UserQuizBackground>
-                        <div>
-                            <EditDeleteButton>
-                                <Delete />
-                            </EditDeleteButton>
-                        </div>
-                    </UserQuizEdit>
+                    <RenderUserQuizzes />
                     <NewQuiz onClick={newQuiz}>
                         <h3>NOVO QUESTIONÁRIO</h3>
                     </NewQuiz>
@@ -84,16 +159,7 @@ export default function HomePage() {
                     Questionários respondidos:
                 </h1>
                 <Quiz>
-                    <QuizBackgroundAnswered>
-                        <h2>
-                            Nome do Questionário
-                        </h2>
-                    </QuizBackgroundAnswered>
-                    <QuizBackgroundAnswered>
-                        <h2>
-                            Nome do Questionário
-                        </h2>
-                    </QuizBackgroundAnswered>
+                    <RenderAnsweredQuizzes />
                 </Quiz>
             </TitleSubTitle>
             <TitleSubTitle>
@@ -101,16 +167,7 @@ export default function HomePage() {
                     Questionários disponíveis:
                 </h1>
                 <Quiz>
-                    <QuizBackground onClick={() => answerQuiz(0)}> {/* Passar parametro o id do quiz pegando da lista que vem da promise */}
-                        <h2>
-                            Nome do Questionário
-                        </h2>
-                    </QuizBackground>
-                    <QuizBackground>
-                        <h2>
-                            Nome do Questionário
-                        </h2>
-                    </QuizBackground>
+                    <RenderAvailableQuizzes />
                 </Quiz>
             </TitleSubTitle>
         </Content>

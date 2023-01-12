@@ -1,33 +1,36 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router';
-import UserContext from '../../providers/UserContext';
 
 export default function HomePage() {
 
     const navigate = useNavigate();
 
-    let answersAmount = 0; //tem que chegar no total de questões
-    let hasAnswered = false;
+    const [questions, setQuestions] = React.useState([]);
+    const [answers, setAnswers] = React.useState([]);
+    const [title, setTitle] = React.useState("");
+    const [quizId, setQuizId] = React.useState(0);
 
-    let questionsAmount = 3 //ATUALIZAR QUANTIDADE DE PERGUNTAS QUE TEM O QUESTIONARIO DE ACORDO COM OQ RECEBER NO BANCO
+    let nameQuiz = JSON.parse(localStorage.getItem('nameQuiz'));
+    let userId = JSON.parse(localStorage.getItem('userId'));
+
+    let answersAmount = 0;
+    let questionsAmount = questions.length;
+    let hasAnswered = false;
 
     function chosenAnswer(nQuestion, nAnswer){
         hasAnswered = false;
-        const questionAnswers = document.querySelectorAll(`.questionAnswers${nQuestion}`)[0].children;
-
-        for(let i = 0; i < questionAnswers.length; i++){
+        const questionAnswers = document.querySelectorAll(`.questionAnswers${nQuestion+1}`)[0].children;
+        for(let i = 1; i < questionAnswers.length; i++){
             if(questionAnswers[i].classList.contains("disabled")){
                 hasAnswered = true;
             }
             questionAnswers[i].classList.remove("disabled");
         }
-        for(let i = 0; i < questionAnswers.length; i++){
-            if (i != 0){
-                if(i != nAnswer+1){
-                    questionAnswers[i].classList.add("disabled");
-                }
+        for(let i = 1; i < questionAnswers.length; i++){
+            if(i != nAnswer+1){
+                questionAnswers[i].classList.add("disabled");
             }
         }
         if(!hasAnswered){
@@ -43,53 +46,29 @@ export default function HomePage() {
         navigate("/home");
     }
 
-    function finish(e){
+    async function save(e){
         e.preventDefault();
-        //CONFIGURAR PARA SALVAR NO BANCO 
+        try{
+            const promise = await axios.post(`http://localhost:5000/quizzes/quiz/save`, {
+                userId: userId,
+                quizId: quizId
+            });
+        }
+        catch(e){
+            alert('Falha.');
+        }
         navigate("/home");
     }
-
-    async function answer(e){
-        /*e.preventDefault();
-
-            <input type="text" onChange = {(e) => setUsername(e.target.value)} value = {username} placeholder='Nome'/>
-            <input type="email" onChange = {(e) => setEmail(e.target.value)} value = {email} placeholder='E-mail'/>
-            <input type="password" onChange = {(e) => setPassword(e.target.value)} value = {password} placeholder='Senha'/>
-            <input type="password" onChange = {(e) => setPasswordConfirm(e.target.value)} value = {passwordConfirm} placeholder='Confirme sua senha'/>
-
-        try{
-            if(password === passwordConfirm){
-                const response = await axios.post('http://localhost:5000/sign-up', {
-                    email: email,
-                    password: password,
-                    username: username,
-                });
-                navigate('/');
-            }
-            else{
-                alert('As senhas não são iguais');
-                resetFields();
-            }
-        }
-        catch(error){
-            if (error.response.status === 409) {
-                alert("Email já cadastrado! Tente novamente")
-            }
-            else {
-                alert("Erro no sistema! Tente novamente.")
-            }
-            resetFields();
-        }*/
-    }
-
-    /*const fetchData = async () => {
-        const promise = await axios.get('http://localhost:5000/home', {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+    
+    const fetchData = async () => {
+        const promise = await axios.post(`http://localhost:5000/quizzes/quiz`, {
+            name: nameQuiz
         });
         const { data } = promise;
-        setDataList(data);
+        setTitle(data.data.title);
+        setQuestions(data.data.questions);
+        setAnswers(data.data.answers);
+        setQuizId(data.data.quizId);
     }
 
     useEffect(() => {
@@ -99,85 +78,66 @@ export default function HomePage() {
         catch(e){
             alert('Falha.');
         }
-    }, []);*/
+    }, []);
+
+    function RenderAnswers({ question }){
+        let order = 0;
+        let questionPosition = question-1;
+        if (answers[questionPosition]){
+            return (
+                answers[questionPosition].map(answer => {
+                    order++;
+                    let answerPosition = order-1;
+                    return(
+                        <ButtonAnswer key = {order} onClick = {() => chosenAnswer(questionPosition, answerPosition)}>
+                            <h2>
+                                {answer.description}
+                            </h2>
+                        </ButtonAnswer>
+                    )
+                })
+            )
+        }
+        else{
+            return null;
+        }
+    }
+
+    function RenderQuestions(){
+        let order = 0;
+        if (questions){
+            return (
+                questions.map(question => {
+                    order++;
+                    return(
+                        <AnswerQuizBackground key = {order} className = {`questionAnswers${order}`}>
+                            <h1>
+                                {question.description}
+                            </h1>
+                            <RenderAnswers question = {order} />
+                        </AnswerQuizBackground>
+                    )
+                })
+            )
+        }
+        else{
+            return null;
+        }
+    }
 
     return (
         <Content>
             <ContentBackground>
                 <h1>
-                    Título do questionário
+                    {title}
                 </h1>
-                <AnswerQuizBackground className = {`questionAnswers${0}`}> {/* Posição do array dessa questão */}
-                    <h1>
-                        Pergunta 1
-                    </h1>
-                    <ButtonAnswer onClick = {() => chosenAnswer(0, 0)}> {/* Passa por paramentro a posição no array dessa resposta para identificar */}
-                        <h2>
-                            Resposta 1
-                        </h2>
-                    </ButtonAnswer>
-                    <ButtonAnswer onClick = {() => chosenAnswer(0, 1)}>
-                        <h2>
-                            Resposta 2
-                        </h2>
-                    </ButtonAnswer>
-                    <ButtonAnswer onClick = {() => chosenAnswer(0, 2)}>
-                        <h2>
-                            Resposta 3
-                        </h2>
-                    </ButtonAnswer>
-                </AnswerQuizBackground>
-                <AnswerQuizBackground className = {`questionAnswers${1}`}>
-                    <h1>
-                        Pergunta 2
-                    </h1>
-                    <ButtonAnswer onClick = {() => chosenAnswer(1, 0)}> {/* Passa por paramentro a posição no array dessa resposta para identificar */}
-                        <h2>
-                            Resposta 1
-                        </h2>
-                    </ButtonAnswer>
-                    <ButtonAnswer onClick = {() => chosenAnswer(1, 1)}>
-                        <h2>
-                            Resposta 2
-                        </h2>
-                    </ButtonAnswer>
-                    <ButtonAnswer onClick = {() => chosenAnswer(1, 2)}>
-                        <h2>
-                            Resposta 3
-                        </h2>
-                    </ButtonAnswer>
-                    <ButtonAnswer onClick = {() => chosenAnswer(1, 3)}>
-                        <h2>
-                            Resposta 4
-                        </h2>
-                    </ButtonAnswer>
-                    <ButtonAnswer onClick = {() => chosenAnswer(1, 4)}>
-                        <h2>
-                            Resposta 5
-                        </h2>
-                    </ButtonAnswer>  
-                </AnswerQuizBackground>
-                <AnswerQuizBackground className = {`questionAnswers${2}`}>
-                    <h1>
-                        Pergunta 3
-                    </h1>
-                    <ButtonAnswer onClick = {() => chosenAnswer(2, 0)}> {/* Passa por paramentro a posição no array dessa resposta para identificar */}
-                        <h2>
-                            Resposta 1
-                        </h2>
-                    </ButtonAnswer>
-                    <ButtonAnswer onClick = {() => chosenAnswer(2, 1)}>
-                        <h2>
-                            Resposta 2
-                        </h2>
-                    </ButtonAnswer> 
-                </AnswerQuizBackground>
-                <AnswerForm onSubmit = {answer}>
+                <RenderQuestions />
+                <AnswerForm onSubmit = {save}>
                     <FormButtons>
                         <FormButton onClick={cancel}>
                             <h3>CANCELAR</h3>
                         </FormButton>
-                        <FormButton className = "finishAnswers hidden" onClick = {finish} type="submit">
+                        <FormButton className = "finishAnswers hidden" type="submit">
                             <h3>CONCLUIR</h3>
                         </FormButton>
                     </FormButtons>

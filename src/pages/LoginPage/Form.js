@@ -1,17 +1,13 @@
 import axios from 'axios';
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router';
 import { Link } from "react-router-dom";
-import UserContext from '../../providers/UserContext';
 
 export default function Form(){
 
     const [cpf, setCpf] = React.useState('');
     const [password, setPassword] = React.useState('');
-
-    const { userId, setUserId } = useContext(UserContext);
-
 
     const navigate = useNavigate();
     function resetFields(){
@@ -27,7 +23,7 @@ export default function Form(){
             });
             const data = response.data;
             if(data){
-                setUserId(data.data);
+                localStorage.setItem('userId', JSON.stringify(data.data));
                 navigate('/home');
             }
             else{
